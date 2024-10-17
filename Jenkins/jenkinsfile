@@ -44,7 +44,6 @@ pipeline {
                 sh '''
                 kubectl get deployment
                 kubectl get svc
-                sleep 300
                 kubectl get deployment
                 '''
             }
