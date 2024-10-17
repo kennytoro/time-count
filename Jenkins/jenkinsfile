@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        // where we define the variables to use
+        IMAGE_NAME = 'kennytoro/stopwatch'
+        IMAGE_TAG = "${IMAGE_NAME}:${BUILD_NUMBER}"
+    }
+
     triggers {
         pollSCM '* * * * *'
     }
@@ -16,13 +22,15 @@ pipeline {
 
         stage('Building the Image') {
             steps {
-                sh "docker build . -t kennytoro/stopwatch"
+                sh "docker build . -t ${IMAGE_NAME}"
+                sh " docker build . -t ${IMAGE_TAG}"
+                sh " docker images"
             }
         }
 
         stage('Pushing the image') {
             steps {
-                sh "docker push kennytoro/stopwatch"
+                sh "docker push ${IMAGE_NAME}"
                 echo "Docker pushed successful"
             }
         }
