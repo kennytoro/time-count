@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stop-watch-deployment
+  labels:
+    app: stop-watch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stop-watch
+  template:
+    metadata:
+      name: stop-watch-deployment
+      labels:
+        app: stop-watch
+    spec:
+      containers:
+        - name: stopwatch
+          image: kennytoro/stopwatch
+          ports:
+            - containerPort: 3500
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stop-watch
+  name: stop-watch-svc
+spec:
+  type: NodePort
+  ports:
+  - name: "stop-watch-svc"
+    port: 3500
+    targetPort: 3500
+    nodePort: 31011
+  selector:
+    app: stop-watch
+    

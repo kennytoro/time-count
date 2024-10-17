@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    triggers {
+        pollSCM '* * * * *'
+    }
+
+    stages {
+
+        stage('Login to docker hub') {
+            steps {
+                sh " cat passwd | docker login -u kennytoro --passwd-stdin"
+                echo " Docker login in successfully"
+            }
+        }
+
+        stage('Building the Image') {
+            steps {
+                sh "docker build . -t kennytoro/stopwatch"
+            }
+        }
+
+        stage('Pushing the image') {
+            steps {
+                sh "docker push kennytoro/stopwatch"
+                echo "Docker pushed successful"
+            }
+        }
+
+        stage('Testing') {
+            steps {
+                sh "docker image"
+            }
+        }
+
+        stage('Running the image on k8s cluster') {
+            steps {
+                sh " kubectl apply -f ./k8s"
+            }
+        }
+
+        stage('Confirm if deployment is ruuning') {
+            steps {
+                sh '''
+                kubectl get deployment
+                kubectl get svc
+                '''
+            }
+        } 
+
+    }
+}
